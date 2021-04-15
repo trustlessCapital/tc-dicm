@@ -92,3 +92,5 @@ require (
 	gopkg.in/ini.v1 v1.55.0 // indirect
 	gopkg.in/segmentio/analytics-go.v3 v3.1.0
 )
+
+replace github.com/textileio/go-threads => github.com/trustlessCapital/tlc-threads v0.0.0-20210408203806-a0a34935e68d

@@ -1,0 +1,409 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "api/hubd/pb/hubd.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "APIService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "OrgInfoMember": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "format": "byte"
+        },
+        "username": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      }
+    },
+    "pbBuildInfoResponse": {
+      "type": "object",
+      "properties": {
+        "gitCommit": {
+          "type": "string"
+        },
+        "gitBranch": {
+          "type": "string"
+        },
+        "gitState": {
+          "type": "string"
+        },
+        "gitSummary": {
+          "type": "string"
+        },
+        "buildDate": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateKeyResponse": {
+      "type": "object",
+      "properties": {
+        "keyInfo": {
+          "$ref": "#/definitions/pbKeyInfo"
+        }
+      }
+    },
+    "pbCreateOrgResponse": {
+      "type": "object",
+      "properties": {
+        "orgInfo": {
+          "$ref": "#/definitions/pbOrgInfo"
+        }
+      }
+    },
+    "pbDestroyAccountResponse": {
+      "type": "object"
+    },
+    "pbGetBillingSessionResponse": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "pbGetCustomerResponse": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "customerId": {
+          "type": "string"
+        },
+        "parentKey": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "accountType": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "accountStatus": {
+          "type": "string"
+        },
+        "subscriptionStatus": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "string",
+          "format": "int64"
+        },
+        "billable": {
+          "type": "boolean"
+        },
+        "delinquent": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64"
+        },
+        "gracePeriodEnd": {
+          "type": "string",
+          "format": "int64"
+        },
+        "invoicePeriod": {
+          "$ref": "#/definitions/pbPeriod"
+        },
+        "dailyUsage": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/pbUsage"
+          }
+        },
+        "dependents": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pbGetIdentityResponse": {
+      "type": "object",
+      "properties": {
+        "identity": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "pbGetOrgResponse": {
+      "type": "object",
+      "properties": {
+        "orgInfo": {
+          "$ref": "#/definitions/pbOrgInfo"
+        }
+      }
+    },
+    "pbGetSessionInfoResponse": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "format": "byte"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "pbInvalidateKeyResponse": {
+      "type": "object"
+    },
+    "pbInviteToOrgResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "pbIsOrgNameAvailableResponse": {
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        }
+      }
+    },
+    "pbIsUsernameAvailableResponse": {
+      "type": "object"
+    },
+    "pbKeyInfo": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "secret": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/pbKeyType"
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "threads": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "secure": {
+          "type": "boolean"
+        }
+      }
+    },
+    "pbKeyType": {
+      "type": "string",
+      "enum": [
+        "KEY_TYPE_UNSPECIFIED",
+        "KEY_TYPE_ACCOUNT",
+        "KEY_TYPE_USER"
+      ],
+      "default": "KEY_TYPE_UNSPECIFIED"
+    },
+    "pbLeaveOrgResponse": {
+      "type": "object"
+    },
+    "pbListBillingUsersResponse": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbGetCustomerResponse"
+          }
+        },
+        "nextOffset": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pbListKeysResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbKeyInfo"
+          }
+        }
+      }
+    },
+    "pbListOrgsResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbOrgInfo"
+          }
+        }
+      }
+    },
+    "pbOrgInfo": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "format": "byte"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OrgInfoMember"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pbPeriod": {
+      "type": "object",
+      "properties": {
+        "unixStart": {
+          "type": "string",
+          "format": "int64"
+        },
+        "unixEnd": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pbRemoveOrgResponse": {
+      "type": "object"
+    },
+    "pbSetupBillingResponse": {
+      "type": "object"
+    },
+    "pbSigninResponse": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "format": "byte"
+        },
+        "session": {
+          "type": "string"
+        }
+      }
+    },
+    "pbSignoutResponse": {
+      "type": "object"
+    },
+    "pbSignupResponse": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "format": "byte"
+        },
+        "session": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUsage": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "units": {
+          "type": "string",
+          "format": "int64"
+        },
+        "total": {
+          "type": "string",
+          "format": "int64"
+        },
+        "free": {
+          "type": "string",
+          "format": "int64"
+        },
+        "grace": {
+          "type": "string",
+          "format": "int64"
+        },
+        "cost": {
+          "type": "number",
+          "format": "double"
+        },
+        "period": {
+          "$ref": "#/definitions/pbPeriod"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

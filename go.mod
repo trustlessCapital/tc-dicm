@@ -8,6 +8,7 @@ require (
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/caarlos0/spin v1.1.0
 	github.com/cenkalti/backoff/v4 v4.0.2
+	github.com/centrifuge/precise-proofs v0.0.0-20210319161458-93cd509ec264
 	github.com/cheggaaa/pb/v3 v3.0.5
 	github.com/cloudflare/cloudflare-go v0.11.6
 	github.com/customerio/go-customerio v2.0.0+incompatible
@@ -47,6 +48,7 @@ require (
 	github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381
 	github.com/manifoldco/promptui v0.7.0
 	github.com/mattn/go-colorable v0.1.8 // indirect
+	github.com/minio/blake2b-simd v0.0.0-20160723061019-3f5f724cb5b1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.3.0 // indirect
 	github.com/multiformats/go-multiaddr v0.3.1
@@ -80,6 +82,7 @@ require (
 	github.com/xakep666/mongo-migrate v0.2.1
 	github.com/xtgo/uuid v0.0.0-20140804021211-a0b114877d4c // indirect
 	go.mongodb.org/mongo-driver v1.4.1
+	golang.org/x/crypto v0.0.0-20201203163018-be400aefbc4c
 	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a
 	golang.org/x/sys v0.0.0-20201218084310-7d0127a74742 // indirect

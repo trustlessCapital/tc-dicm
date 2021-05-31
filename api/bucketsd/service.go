@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
 	"errors"
 	"fmt"
 	"io"
@@ -16,6 +17,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/centrifuge/precise-proofs/proofs"
 	"github.com/google/go-cmp/cmp"
 	"github.com/ipfs/go-cid"
 	ipfsfiles "github.com/ipfs/go-ipfs-files"
@@ -33,7 +35,7 @@ import (
 	pow "github.com/textileio/powergate/v2/api/client"
 	userPb "github.com/textileio/powergate/v2/api/gen/powergate/user/v1"
 	powUtil "github.com/textileio/powergate/v2/util"
-	pb "github.com/textileio/textile/v2/api/bucketsd/pb"
+	"github.com/textileio/textile/v2/api/bucketsd/pb"
 	"github.com/textileio/textile/v2/api/common"
 	"github.com/textileio/textile/v2/buckets"
 	"github.com/textileio/textile/v2/buckets/archive/retrieval"
@@ -42,6 +44,7 @@ import (
 	mdb "github.com/textileio/textile/v2/mongodb"
 	tdb "github.com/textileio/textile/v2/threaddb"
 	"github.com/textileio/textile/v2/util"
+	"golang.org/x/crypto/blake2b"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -1801,20 +1804,43 @@ func (s *Service) PushPath(server pb.APIService_PushPathServer) (err error) {
 	if err != nil {
 		return err
 	}
-	if err = server.Send(&pb.PushPathResponse{
+	pbPushPathResponse := &pb.PushPathResponse{
 		Event: &pb.PushPathResponse_Event{
 			Path:   newPath.String(),
 			Size:   size,
 			Root:   pbroot,
 			Pinned: s.getPinnedBytes(ctx),
 		},
-	}); err != nil {
+	}
+	if err := generateMerkleRoot([]byte(pbroot.Key), pbPushPathResponse); err != nil {
+		return err
+	}
+	if err = server.Send(pbPushPathResponse); err != nil {
 		return err
 	}
 
 	go s.IPNSManager.Publish(dirPath, buck.Key)
 
 	log.Debugf("pushed %s to bucket: %s", filePath, buck.Key)
+	return nil
+}
+
+func generateMerkleRoot(key []byte, data *pb.PushPathResponse) error {
+	blake2b256, err := blake2b.New256(key)
+	if err != nil {
+		return err
+	}
+	doctree, err := proofs.NewDocumentTree(proofs.TreeOptions{Hash: sha256.New(), LeafHash: blake2b256})
+	if err != nil {
+		return err
+	}
+	if err := doctree.AddLeavesFromDocument(data); err != nil {
+		return err
+	}
+	if err := doctree.Generate(); err != nil {
+		return err
+	}
+	log.Infof("generate merkle root: %s", doctree.String())
 	return nil
 }
 

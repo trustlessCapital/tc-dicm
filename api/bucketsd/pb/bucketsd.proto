@@ -341,6 +341,23 @@ message ArchiveWatchResponse {
     string msg = 1;
 }
 
+message MerkleRequest {
+    string key = 1;
+}
+
+message MerkleResponse {
+    string Merkle = 1;
+}
+
+message MerkleVerifyRequest {
+    string key = 1;
+    string proof = 2;
+}
+
+message MerkleVerifyResponse {
+    bool valid = 1;
+}
+
 service APIService {
     rpc List(ListRequest) returns (ListResponse) {}
     rpc Create(CreateRequest) returns (CreateResponse) {}
@@ -365,4 +382,8 @@ service APIService {
     rpc Archive(ArchiveRequest) returns (ArchiveResponse) {}
     rpc Archives(ArchivesRequest) returns (ArchivesResponse) {}
     rpc ArchiveWatch(ArchiveWatchRequest) returns (stream ArchiveWatchResponse) {}
+
+    // Merkle
+    rpc GetMerkle(MerkleRequest) returns (MerkleResponse) {}
+    rpc VerifyMerkle(MerkleVerifyRequest) returns (MerkleVerifyResponse) {}
 }

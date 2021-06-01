@@ -28,6 +28,7 @@ type Collections struct {
 	APIKeys         *APIKeys
 	IPNSKeys        *IPNSKeys
 	BucketArchives  *BucketArchives
+	BucketMerkle    *BucketMerkle
 	ArchiveTracking *ArchiveTracking
 }
 
@@ -74,6 +75,10 @@ func NewCollections(ctx context.Context, uri, database string, hub bool) (*Colle
 		return nil, err
 	}
 	c.BucketArchives, err = NewBucketArchives(ctx, db)
+	if err != nil {
+		return nil, err
+	}
+	c.BucketMerkle, err = NewBucketMerkle(ctx, db)
 	if err != nil {
 		return nil, err
 	}

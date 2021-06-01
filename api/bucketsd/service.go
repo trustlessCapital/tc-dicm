@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -18,6 +19,7 @@ import (
 	"time"
 
 	"github.com/centrifuge/precise-proofs/proofs"
+	proofspb "github.com/centrifuge/precise-proofs/proofs/proto"
 	"github.com/google/go-cmp/cmp"
 	"github.com/ipfs/go-cid"
 	ipfsfiles "github.com/ipfs/go-ipfs-files"
@@ -1812,7 +1814,7 @@ func (s *Service) PushPath(server pb.APIService_PushPathServer) (err error) {
 			Pinned: s.getPinnedBytes(ctx),
 		},
 	}
-	if err := generateMerkleRoot([]byte(pbroot.Key), pbPushPathResponse); err != nil {
+	if err := s.generateMerkleRoot([]byte(pbroot.Key), pbPushPathResponse); err != nil {
 		return err
 	}
 	if err = server.Send(pbPushPathResponse); err != nil {
@@ -1825,7 +1827,7 @@ func (s *Service) PushPath(server pb.APIService_PushPathServer) (err error) {
 	return nil
 }
 
-func generateMerkleRoot(key []byte, data *pb.PushPathResponse) error {
+func (s *Service) generateMerkleRoot(key []byte, data *pb.PushPathResponse) error {
 	blake2b256, err := blake2b.New256(key)
 	if err != nil {
 		return err
@@ -1840,7 +1842,11 @@ func generateMerkleRoot(key []byte, data *pb.PushPathResponse) error {
 	if err := doctree.Generate(); err != nil {
 		return err
 	}
-	log.Infof("generate merkle root: %s", doctree.String())
+
+	if _, err := s.Collections.BucketMerkle.Create(context.Background(), string(key), string(doctree.RootHash())); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -3400,6 +3406,37 @@ func (s *Service) ArchiveWatch(req *pb.ArchiveWatchRequest, server pb.APIService
 		return fmt.Errorf("watching cid logs: %v", err)
 	}
 	return nil
+}
+
+func (s *Service) GetMerkle(ctx context.Context, request *pb.MerkleRequest) (*pb.MerkleResponse, error) {
+	m, err := s.Collections.BucketMerkle.Get(ctx, request.GetKey())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.MerkleResponse{Merkle: m.Value}, nil
+}
+
+func (s *Service) VerifyMerkle(ctx context.Context, request *pb.MerkleVerifyRequest) (*pb.MerkleVerifyResponse, error) {
+	m, err := s.Collections.BucketMerkle.Get(ctx, request.GetKey())
+	if err != nil {
+		return nil, err
+	}
+
+	blake2b256, err := blake2b.New256([]byte(m.BucketKey))
+	if err != nil {
+		return nil, err
+	}
+	doctree, err := proofs.NewDocumentTreeWithRootHash(proofs.TreeOptions{Hash: sha256.New(), LeafHash: blake2b256}, []byte(m.Value))
+	if err != nil {
+		return nil, err
+	}
+	var proof proofspb.Proof
+	if err := json.Unmarshal([]byte(request.Proof), &proof); err != nil {
+		return nil, err
+	}
+
+	valid, err := doctree.ValidateProof(&proof)
+	return &pb.MerkleVerifyResponse{Valid: valid}, err
 }
 
 func toPbArchiveConfig(config *mdb.ArchiveConfig) *pb.ArchiveConfig {

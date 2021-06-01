@@ -48,7 +48,6 @@ require (
 	github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381
 	github.com/manifoldco/promptui v0.7.0
 	github.com/mattn/go-colorable v0.1.8 // indirect
-	github.com/minio/blake2b-simd v0.0.0-20160723061019-3f5f724cb5b1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.3.0 // indirect
 	github.com/multiformats/go-multiaddr v0.3.1
@@ -97,3 +96,5 @@ require (
 )
 
 replace github.com/textileio/go-threads => github.com/trustlessCapital/tlc-threads v0.0.0-20210408203806-a0a34935e68d
+
+replace github.com/xsleonard/go-merkle v1.1.0 => github.com/centrifuge/go-merkle v0.0.0-20190727075423-0ac78bbbc01b

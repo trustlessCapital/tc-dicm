@@ -180,3 +180,22 @@ PROTOC=$(shell pwd)/buildtools/protoc/bin
 mindex-rest:
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
 	PATH=$(PROTOC):$(PATH) protoc -I . --grpc-gateway_out . --grpc-gateway_opt logtostderr=true --grpc-gateway_opt paths=source_relative --grpc-gateway_opt generate_unbound_methods=true --openapiv2_out . --openapiv2_opt generate_unbound_methods=true  --openapiv2_opt logtostderr=true  api/mindexd/pb/mindexd.proto
+
+grpc-gateway-deps:
+	go install \
+	    github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
+	    github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 \
+	    google.golang.org/protobuf/cmd/protoc-gen-go \
+	    google.golang.org/grpc/cmd/protoc-gen-go-grpc
+
+grpc-gateway:
+	protoc -I . --grpc-gateway_out . \
+		--grpc-gateway_opt logtostderr=true \
+		--grpc-gateway_opt paths=source_relative \
+		--grpc-gateway_opt generate_unbound_methods=true \
+		./api/hubd/pb/hubd.proto
+	protoc -I . --grpc-gateway_out . \
+		--grpc-gateway_opt logtostderr=true \
+		--grpc-gateway_opt paths=source_relative \
+		--grpc-gateway_opt generate_unbound_methods=true \
+		./api/bucketsd/pb/bucketsd.proto
